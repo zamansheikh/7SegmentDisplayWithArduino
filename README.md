@@ -1,7 +1,10 @@
 #7 Segment Display With Arduino R3
 
 #About Team 
-
+    Md. Shamsuzzaman 
+    ID: 211-15-4031
+    Mohaiminul Islam Nafiz
+    ID: 211-15-4041
 
 
 <p align="center">
