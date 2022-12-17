@@ -9,6 +9,7 @@
 #define Echo 11
 #define Trig 10
 
+//This program is for the 7 segment display with LED
 
 double duration;
 int distance;
