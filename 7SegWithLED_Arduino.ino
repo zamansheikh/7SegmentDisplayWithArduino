@@ -9,153 +9,189 @@
 #define Echo 11
 #define Trig 10
 
-//This program is for the 7 segment display with LED
+double duration; // Time taken for the echo pulse
+float distance;  // Distance calculated in meters
+int flag;
 
-double duration;
-int distance;
-
-void setup()
-{
+void setup() {
+    // Set pin modes for LED outputs and sensor pins
     pinMode(One, OUTPUT);
- 	pinMode(Two, OUTPUT);
-  	pinMode(Three, OUTPUT);
-	pinMode(Four, OUTPUT);
-  	pinMode(Five, OUTPUT);
-  	pinMode(Six, OUTPUT);
-  	pinMode(Seven, OUTPUT);
-  	pinMode(Eight, OUTPUT);
-  	pinMode(Trig, OUTPUT);
-  
- 	pinMode(Echo, INPUT);
-	Serial.begin(9600); 
-  
-  
-  
-}
-int flag; 
+    pinMode(Two, OUTPUT);
+    pinMode(Three, OUTPUT);
+    pinMode(Four, OUTPUT);
+    pinMode(Five, OUTPUT);
+    pinMode(Six, OUTPUT);
+    pinMode(Seven, OUTPUT);
+    pinMode(Eight, OUTPUT);
+    pinMode(Trig, OUTPUT);
+    pinMode(Echo, INPUT);
 
-void low( int test ){
-	if( test != flag){
-		digitalWrite(One, LOW);
-    	digitalWrite(Two, LOW);
-    	digitalWrite(Three, LOW);
-    	digitalWrite(Four, LOW);
-    	digitalWrite(Five, LOW);
-    	digitalWrite(Six, LOW);
-    	digitalWrite(Seven, LOW);
-    	digitalWrite(Eight, LOW);
-      	flag = test;
-      } 
+    // Start serial communication
+    Serial.begin(9600);
 }
 
+// Function to reset all LEDs to LOW and prevent redundant switching
+void low(int test) {
+    if (test != flag) {
+        digitalWrite(One, LOW);
+        digitalWrite(Two, LOW);
+        digitalWrite(Three, LOW);
+        digitalWrite(Four, LOW);
+        digitalWrite(Five, LOW);
+        digitalWrite(Six, LOW);
+        digitalWrite(Seven, LOW);
+        digitalWrite(Eight, LOW);
+        flag = test;
+    }
+}
 
-void loop()
-{
-  	digitalWrite(Trig, LOW);
-	delayMicroseconds(2);
-	digitalWrite(Trig, HIGH);
-	delayMicroseconds(10);
-  	digitalWrite(Trig, LOW);
-  	
-  	duration = pulseIn(Echo, HIGH);
-    //distance=(duration *.034/2);
-    Serial.println(duration);
-  	//Serial.println(distance);
-    if(duration <=  19398 && duration >=  17242) {
-    low(9);
-    digitalWrite(One, HIGH);
-    digitalWrite(Two, HIGH);
-    digitalWrite(Three, HIGH);
-    digitalWrite(Four, HIGH);
-    digitalWrite(Five, LOW);
-    digitalWrite(Six, HIGH);
-    digitalWrite(Seven, HIGH);
+void loop() {
+    // Send a 10 µs pulse to the Trig pin
+    digitalWrite(Trig, LOW);
+    delayMicroseconds(2);
+    digitalWrite(Trig, HIGH);
+    delayMicroseconds(10);
+    digitalWrite(Trig, LOW);
+
+    // Measure the duration of the pulse
+    duration = pulseIn(Echo, HIGH);
+
+    // Calculate distance in meters
+    distance = (duration * 0.034) / 2 / 100; // Speed of sound in cm/µs, divided by 100 for meters
+    Serial.print("Distance: ");
+    Serial.print(distance);
+    Serial.println(" m");
+
+    // Determine the LED pattern based on the distance
+    int roundedDistance = -1; // Default case for out-of-range distances
+   	if (distance > 0 && distance <= 0.1) roundedDistance = 0;
+	else if (distance > 0.1 && distance <= 0.4) roundedDistance = 1;
+	else if (distance > 0.4 && distance <= 0.7) roundedDistance = 2;
+	else if (distance > 0.7 && distance <= 1.0) roundedDistance = 3;
+	else if (distance > 1.0 && distance <= 1.3) roundedDistance = 4;
+	else if (distance > 1.3 && distance <= 1.6) roundedDistance = 5;
+	else if (distance > 1.6 && distance <= 1.9) roundedDistance = 6;
+	else if (distance > 1.9 && distance <= 2.2) roundedDistance = 7;
+	else if (distance > 2.2 && distance <= 2.5) roundedDistance = 8;
+	else if (distance > 2.5 && distance <= 3.3) roundedDistance = 9;
+	else roundedDistance = -1; // Out of range
+    // Update LEDs using switch-case
+    switch (roundedDistance) {
+        case 9:
+            low(9);
+            digitalWrite(One, HIGH);
+            digitalWrite(Two, HIGH);
+            digitalWrite(Three, HIGH);
+            digitalWrite(Four, HIGH);
+            digitalWrite(Five, LOW);
+            digitalWrite(Six, HIGH);
+            digitalWrite(Seven, HIGH);
+            break;
+
+        case 8:
+            low(8);
+            digitalWrite(One, HIGH);
+            digitalWrite(Two, HIGH);
+            digitalWrite(Three, HIGH);
+            digitalWrite(Four, HIGH);
+            digitalWrite(Five, HIGH);
+            digitalWrite(Six, HIGH);
+            digitalWrite(Seven, HIGH);
+            break;
+
+        case 7:
+            low(7);
+            digitalWrite(One, HIGH);
+            digitalWrite(Two, HIGH);
+            digitalWrite(Three, HIGH);
+            digitalWrite(Four, LOW);
+            digitalWrite(Five, LOW);
+            digitalWrite(Six, LOW);
+            digitalWrite(Seven, LOW);
+            break;
+
+        case 6:
+            low(6);
+            digitalWrite(One, HIGH);
+            digitalWrite(Two, LOW);
+            digitalWrite(Three, HIGH);
+            digitalWrite(Four, HIGH);
+            digitalWrite(Five, HIGH);
+            digitalWrite(Six, HIGH);
+            digitalWrite(Seven, HIGH);
+            break;
+
+        case 5:
+            low(5);
+            digitalWrite(One, HIGH);
+            digitalWrite(Two, LOW);
+            digitalWrite(Three, HIGH);
+            digitalWrite(Four, HIGH);
+            digitalWrite(Five, LOW);
+            digitalWrite(Six, HIGH);
+            digitalWrite(Seven, HIGH);
+            break;
+
+        case 4:
+            low(4);
+            digitalWrite(One, LOW);
+            digitalWrite(Two, HIGH);
+            digitalWrite(Three, HIGH);
+            digitalWrite(Four, LOW);
+            digitalWrite(Five, LOW);
+            digitalWrite(Six, HIGH);
+            digitalWrite(Seven, HIGH);
+            break;
+
+        case 3:
+            low(3);
+            digitalWrite(One, HIGH);
+            digitalWrite(Two, HIGH);
+            digitalWrite(Three, HIGH);
+            digitalWrite(Four, HIGH);
+            digitalWrite(Five, LOW);
+            digitalWrite(Six, LOW);
+            digitalWrite(Seven, HIGH);
+            break;
+
+        case 2:
+            low(2);
+            digitalWrite(One, HIGH);
+            digitalWrite(Two, HIGH);
+            digitalWrite(Three, LOW);
+            digitalWrite(Four, HIGH);
+            digitalWrite(Five, HIGH);
+            digitalWrite(Six, LOW);
+            digitalWrite(Seven, HIGH);
+            break;
+
+        case 1:
+            low(1);
+            digitalWrite(One, LOW);
+            digitalWrite(Two, HIGH);
+            digitalWrite(Three, HIGH);
+            digitalWrite(Four, LOW);
+            digitalWrite(Five, LOW);
+            digitalWrite(Six, LOW);
+            digitalWrite(Seven, LOW);
+            break;
+
+        case 0:
+            low(0);
+            digitalWrite(One, HIGH);
+            digitalWrite(Two, HIGH);
+            digitalWrite(Three, HIGH);
+            digitalWrite(Four, HIGH);
+            digitalWrite(Five, HIGH);
+            digitalWrite(Six, HIGH);
+            digitalWrite(Seven, LOW);
+            break;
+
+        default: // For out-of-range distances
+            low(-1);
+            digitalWrite(Eight, HIGH);
+            break;
     }
-  
-    else if (duration <=  17242 && duration >=  15088 ) {
-      low(8);
-      digitalWrite(One, HIGH);
-      digitalWrite(Two, HIGH);
-      digitalWrite(Three, HIGH);
-      digitalWrite(Four, HIGH);
-      digitalWrite(Five, HIGH);
-      digitalWrite(Six, HIGH);
-      digitalWrite(Seven, HIGH);
-    }
-  
-    else if (duration <=  15088 && duration >=  12933) {
-      low(7);
-      digitalWrite(One, HIGH);
-      digitalWrite(Two, HIGH);
-      digitalWrite(Three, HIGH);
-      digitalWrite(Four, LOW);
-      digitalWrite(Five, LOW);
-      digitalWrite(Six, LOW);
-      digitalWrite(Seven, LOW);
-    }
-   else if (duration <=  12933 && duration >=  10778) {
-      low(6);
-      digitalWrite(One, HIGH);
-      digitalWrite(Two, LOW);
-      digitalWrite(Three, HIGH);
-      digitalWrite(Four, HIGH);
-      digitalWrite(Five, HIGH);
-      digitalWrite(Six, HIGH);
-      digitalWrite(Seven, HIGH);
-    }
-   else if (duration <=  10778 && duration >=  8623) {
-      low(5);
-      digitalWrite(One, HIGH);
-      digitalWrite(Two, LOW);
-      digitalWrite(Three, HIGH);
-      digitalWrite(Four, HIGH);
-      digitalWrite(Five, LOW);
-      digitalWrite(Six, HIGH);
-      digitalWrite(Seven, HIGH);
-    }
-   else if (duration <=  8623 && duration >=  6468) {
-      low(4);
-      digitalWrite(One, LOW);
-      digitalWrite(Two, HIGH);
-      digitalWrite(Three, HIGH);
-      digitalWrite(Four, LOW);
-      digitalWrite(Five, LOW);
-      digitalWrite(Six, HIGH);
-      digitalWrite(Seven, HIGH);
-    }
-   else if (duration <=  6468 && duration >=  4313) {
-      low(3);
-      digitalWrite(One, HIGH);
-      digitalWrite(Two, HIGH);
-      digitalWrite(Three, HIGH);
-      digitalWrite(Four, HIGH);
-      digitalWrite(Five, LOW);
-      digitalWrite(Six, LOW);
-      digitalWrite(Seven, HIGH);
-    }
-  else if (duration <=  4313 && duration >=  2158) {
-      low(2);
-      digitalWrite(One, HIGH);
-      digitalWrite(Two, HIGH);
-      digitalWrite(Three, LOW);
-      digitalWrite(Four, HIGH);
-      digitalWrite(Five, HIGH);
-      digitalWrite(Six, LOW);
-      digitalWrite(Seven, HIGH);
-    }
-  else if (duration <=  2158 && duration >=  0) {
-      low(1);
-      digitalWrite(One, LOW);
-      digitalWrite(Two, HIGH);
-      digitalWrite(Three, HIGH);
-      digitalWrite(Four, LOW);
-      digitalWrite(Five, LOW);
-      digitalWrite(Six, LOW);
-      digitalWrite(Seven, LOW);
-    }
-                                                                                                                                                                                  
-  else {
-    digitalWrite(Eight, HIGH);
-    low(-1);
-    } 	
+
+    delay(1000); // Delay before the next reading
 }
